@@ -1,5 +1,6 @@
 ﻿using PixelPlanetUtils.Canvas;
 using System.Runtime.Serialization;
+using CommandLine;
 
 namespace PixelPlanetUtils.NetworkInteraction
 {
@@ -17,5 +18,8 @@ namespace PixelPlanetUtils.NetworkInteraction
 
         [DataMember(Name = "y")]
         public int AbsoluteY;
+
+        [DataMember(Name = "token")]
+        public object Token = null;
     }
 }

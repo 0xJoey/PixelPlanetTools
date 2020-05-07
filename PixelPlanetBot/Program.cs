@@ -551,6 +551,8 @@ namespace PixelPlanetBot
                     if (options.DefenseMode)
                     {
                         logger.Log($"Image integrity is {percent:F1}%, {total - done} corrupted pixels", MessageGroup.Info, time);
+                        if (griefedPerMinute <= 1)
+                            logger.Log($"Building {builtPerMinute:F1} px/min", MessageGroup.Info, time);
                         logger.LogDebug($"StatsCollectionThreadBody(): acquiring grief lock");
                         lock (waitingGriefLock)
                         { }

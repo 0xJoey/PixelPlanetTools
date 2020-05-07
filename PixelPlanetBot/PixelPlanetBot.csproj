@@ -19,9 +19,15 @@
     <ProjectReference Include="..\PixelPlanetUtils\PixelPlanetUtils.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+
   <PropertyGroup>
-    <PostBuildEvent>if $(Configuration) == Release (
-..\..\..\..\executable\ILRepack.exe /parallel /target:exe /ndebug /targetplatform:"v4,C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2" /wildcards /out:..\..\..\..\executable\PixelPlanetBot.exe PixelPlanetBot.exe *.dll
+	  <PostBuildEvent>if $(Configuration) == Release (
+..\..\..\..\ilrepack\tools\ILRepack.exe /parallel /target:exe /ndebug /targetplatform:"v4,C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2" /wildcards /out:..\..\..\..\executable\PixelPlanetBot.exe PixelPlanetBot.exe *.dll
 del ..\..\..\..\executable\*.config
 )
 </PostBuildEvent>

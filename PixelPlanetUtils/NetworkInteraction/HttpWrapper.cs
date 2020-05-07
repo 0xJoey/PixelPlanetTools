@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using XY = System.ValueTuple<byte, byte>;
@@ -23,11 +24,12 @@ namespace PixelPlanetUtils.NetworkInteraction
         
         public static void ConnectToApi()
         {
-            while (true)
+	        System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+	        while (true)
             {
                 try
                 {
-                    Logger?.LogTechState("Connecting to API...");
+	                Logger?.LogTechState("Connecting to API...");
                     using (HttpWebResponse response = SendRequest("api/me"))
                     {
                         if (response.StatusCode != HttpStatusCode.OK)
@@ -70,7 +72,8 @@ namespace PixelPlanetUtils.NetworkInteraction
                 Canvas = byte.MinValue,
                 Color = color,
                 AbsoluteX = x,
-                AbsoluteY = y
+                AbsoluteY = y,
+                Token = null
             };
             try
             {
@@ -135,6 +138,9 @@ namespace PixelPlanetUtils.NetworkInteraction
                             error = $"site is overloaded, delay {coolDown}s before next attempt";
                             return false;
                         case (HttpStatusCode)422:
+                            /*byte[] buffer = new byte[response.ContentLength];
+                            response.GetResponseStream().Read(buffer, 0, (int)response.ContentLength);
+                            Console.WriteLine(Encoding.ASCII.GetString(buffer));*/
                             error = "captcha";
                             totalCoolDown = coolDown = 0.0;
                             return false;
@@ -159,8 +165,18 @@ namespace PixelPlanetUtils.NetworkInteraction
             HttpWebRequest request = WebRequest.CreateHttp($"{UrlManager.BaseHttpAdress}/{relativeUrl}");
             request.Timeout = timeout;
             request.Proxy = Proxy;
+            request.Accept = "*/*";
             request.Headers["Origin"] = request.Referer = UrlManager.BaseHttpAdress;
-            request.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.122 Safari/537.36";
+            request.Headers["Accept-Language"] = "en-US,en;q=0.5";
+            //request.Headers["Accept-Encoding"] = "plaintext";
+            request.ServicePoint.Expect100Continue = false;
+            request.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0";
+
+
+//            foreach (var header in request.Headers)
+//            {
+//                Console.WriteLine(header + ":" + request.Headers[header.ToString()].ToString());
+//            }
             if (data != null)
             {
                 request.Method = "POST";
@@ -171,6 +187,7 @@ namespace PixelPlanetUtils.NetworkInteraction
                     {
                         string jsonText = JsonConvert.SerializeObject(data);
                         Logger?.LogDebug($"SendRequest(): data to send - {jsonText}");
+                        //Console.WriteLine(jsonText);
                         streamWriter.Write(jsonText);
                     }
                 }
