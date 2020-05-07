@@ -12,7 +12,7 @@ namespace PixelPlanetUtils.Updates
 {
     public class UpdateChecker : IDisposable
     {
-        private const string latestReleaseUrl = "https://api.github.com/repos/Topinambur223606/PixelPlanetTools/releases/latest";
+        private const string latestReleaseUrl = "https://api.github.com/repos/0xJoey/PixelPlanetTools/releases/latest";
         private const string updaterFileName = "Updater.exe";
 
         private readonly static string updaterPath = Path.Combine(PathTo.AppFolder, updaterFileName);
